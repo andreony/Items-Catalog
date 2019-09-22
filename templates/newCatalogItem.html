@@ -1,0 +1,32 @@
+{% extends 'layout.html' %}
+{% block content %}
+	<div class="row justify-content-center">
+			<div class="col-sm-9">
+			<legend class="border-bottom">
+				New Menu Item
+			</legend>
+			<form action="{{url_for('newCatalogItem')}}" method = 'POST'>
+				<div class="form-group">
+					<label for="title"><em>Title:</em></label>
+					<input id="title"	class="form-control" type='text' size='30' name='title' required placeholder="title">
+				</div>
+				<div class="form-group">
+					<label for="description">Description:</label>
+					<br>
+					<textarea class="form-control" id="description" size='30' name='description' required placeholder="Description for the new item"></textarea>
+
+				</div>
+				<div class="input-group">
+					<select class="custom-select" id="catalog-category" name="catalog-category">
+						<option selected>Choose Category...</option>
+						{% for category in categories  %}
+							<option value="{{category.id}}">{{category.name}}</option>
+						{% endfor %}
+					</select>
+				</div>
+				<input class="btn btn-outline-success my-3" type='submit' value='Create'>
+			</form>	
+		</div>
+	</div>
+	
+{% endblock %}

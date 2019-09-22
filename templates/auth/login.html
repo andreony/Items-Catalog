@@ -1,0 +1,153 @@
+{% extends 'layout.html' %}
+{% block content %}
+<!-- <script src="//apis.google.com/js/platform.js?onload=start" async defer> </script>
+<script src="https://apis.google.com/js/client:platform.js?onload=start"></script>
+ -->
+  <script src="//apis.google.com/js/platform.js?onload=start"> </script>
+
+<!-- END PRE-REQUISITES FOR GOOGLE SIGN IN -->
+
+<!-- fb-login -->
+<script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v4.0&appId=420835655208795&autoLogAppEvents=1"></script>
+
+	<div id="fb-root"></div>
+<!-- <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v4.0&appId=742811282797748&autoLogAppEvents=1"></script> -->
+
+
+<script>
+	function signInCallback(authResult){
+    console.log(authResult);
+    
+		$.ajax({
+			type: 'POST',
+			url: '/gconnect?state={{STATE}}',
+			processData: false,
+			contentType: 'application/octet-stream; charset=utf-8',
+			data: authResult['code'],
+			success: function(result){
+				if(result){
+					$('#result').html(`
+						Login Successful!
+						</br>
+						${result}
+						</br>
+						Redirecting...
+					`)
+					setTimeout(function(){
+						window.location.href = "/";
+					}, 4000);
+				}else if(authResult['error']){
+					console.log('error: ' + authResult['error']);
+				}else{
+					$('#result').html('Failed to make a server-side call')
+				}
+			},
+		});
+	}
+
+/*END GOOGLE PLUS SIGN IN BUTTON */
+
+/*FACEBOOK SIGN IN*/
+
+  window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '420835655208795',
+      xfbml      : true,
+      version    : 'v2.2'
+    });
+    FB.AppEvents.logPageView();
+  };
+
+  (function(d, s, id){
+     var js, fjs = d.getElementsByTagName(s)[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement(s); js.id = id;
+     js.src = "https://connect.facebook.net/en_US/sdk.js";
+     fjs.parentNode.insertBefore(js, fjs);
+   }(document, 'script', 'facebook-jssdk'));
+  // Here we run a very simple test of the Graph API after login is
+  // successful.  See statusChangeCallback() for when this call is made.
+  function sendTokenToServer() {
+    var access_token = FB.getAuthResponse()['accessToken'];
+    console.log(access_token)
+    console.log('Welcome!  Fetching your information.... ');
+    FB.api('/me', function(response) {
+      console.log('Successful login for: ' + response.name);
+      console.log(response)
+     $.ajax({
+      type: 'POST',
+      url: '/fbconnect?state={{STATE}}',
+      processData: false,
+      data: access_token,
+      contentType: 'application/octet-stream; charset=utf-8',
+      success: function(result) {
+        // Handle or verify the server response if necessary.
+        console.log(result)
+        if (result) {
+          $('#sign-in-card').fadeOut('slow');
+          $('#result').html('Login Successful!</br>'+ result + '</br>Redirecting...')
+         setTimeout(function() {
+          window.location.href = "/";
+         }, 4000);
+          
+        } else {
+          $('#result').html('Failed to make a server-side call. Check your configuration and console.');
+           }
+        },
+              
+  });
+    });
+  }
+
+  </script>
+  <!-- style="min-height:100vh; background: url({{url_for('static', filename='logo4.jpg')}});
+     background-size: cover; background-repeat: no-repeat;" -->
+<div class="container">
+  <div class="row justify-content-center">
+    
+  <div class="col-sm-6">
+    <div class="card shadow" style="max-width: 20rem;">
+      <div class="card-header">
+        <legend id="login-card-header-text" class="text-danger" style="display: none;">Chose Login Provider</legend>
+      </div>
+        <div id="sign-in-card" class="card-body text-center">
+          <!-- GOOGLE PLUS SIGN IN BUTTON -->
+            <div id="signinButton" class="text-center w-100">
+              <button class="g-signin btn m-0 p-0"
+                style="display: none"
+                data-scope="openid email"
+                data-clientid="8992757870-gej3l2ilo437qbsfqgidpqggcsq7tmcc.apps.googleusercontent.com"
+                data-redirecturi="postmessage"
+                data-accesstype="offline"
+                data-cookiepolicy="single_host_origin"
+                data-callback="signInCallback"
+                data-approvalprompt="force">
+                <img id="customBtn" src="/signin_button.png" width="200px" alt="Sign in with Google+" />
+              </button>
+            </div>
+            <hr>
+            <div id="fb-login-button" class="fb-login-button" data-width="50" data-size="large" 
+              style="display: none"
+              data-button-type="continue_with" 
+              data-auto-logout-link="true" 
+              data-use-continue-as="true"
+              scope="public_profile,email"
+              onlogin="sendTokenToServer()">
+            </div>
+        </div>
+      </div>
+  </div>
+  <div id="result"></div>
+  
+  </div>
+</div>
+<script>
+  $(document).ready(function(){
+    // -- acount for fb button delay
+    $('#fb-login-button').delay(2000).fadeIn('slow');
+    $('#login-card-header-text').fadeIn(1000);
+    $('.g-signin').fadeIn(2000);
+  });
+</script>
+{% endblock %}
+

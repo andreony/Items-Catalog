@@ -1,0 +1,15 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+	<div class="row">
+		<legend class="border-bottom">
+			<em>Enter a new name for this category:</em>
+		</legend>
+		<form class="form-row" action= "{{url_for('editCategory', category_name=category.name) }}" method = 'POST'>
+		<input class="form-control" type = 'text' size='30' name='name' value='{{ category.name }}'> 
+		<input class="btn btn-outline-info" type='submit' value='Edit'>
+	</form>
+	<a href= "{{url_for('showCatalog') }}">Cancel</a>
+	</div>
+	
+{% endblock %}

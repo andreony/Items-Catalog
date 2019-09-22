@@ -1,0 +1,31 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div id="detailed-view-wrapper" class="container-fluid">
+	<div class="row justify-content-center">
+		<div id="item-detailed-view" class="col-sm-10">
+			<legend class="border-bottom mb-2">
+				{% if item %} {{item.title}} {% else %} No such item! {% endif %}
+			</legend>
+			<div class="card border-info shadow">
+				<div class="card-body">{{item.description}}</div>
+				{% if 'username' in session %}
+				  {% if session['username']  == item.item_user_name %}
+				<div class="card-footer text-right">
+					<a href="{{url_for('editCatalogItem', category_name=item.item_cat_name, item_title=item.title)}}" 
+						class="btn btn-outline-info">Edit</a>
+					<a href="{{url_for('deleteCatalogItem', item_title=item.title)}}" class="btn btn-outline-danger">Delete</a>
+				</div>
+				  {% endif %}
+				{% endif %}
+			</div>
+		</div>
+	</div>
+	<!-- <div id="bg-logo" class="position-absolute" style="right:10px; bottom: 10px; transform: rotate(10deg); overflow: hidden; z-index: 1">
+		<div class="card shadow">
+			<div class="card-body">
+				<img src="{{url_for('static', filename='logo.jpg')}}" alt="">
+			</div>			
+		</div>
+	</div> -->
+</div>
+{% endblock %}

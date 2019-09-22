@@ -1,0 +1,17 @@
+{% extends 'layout.html' %}
+
+	{% block content %}
+	<div class="row">
+		<legend class="border-bottom"> New Category	</legend>
+		<form class="form-row"	action="{{url_for('newCategory')}}" method = 'POST'>
+
+			<label><em>Name:</em></label>
+
+			<input class="form-control" type='text' size='30' name='name' required>
+
+			<button class="btn btn-outline-info my-2"  type='submit'> Create </button>
+				
+		</form>
+	</div>
+
+{% endblock %}

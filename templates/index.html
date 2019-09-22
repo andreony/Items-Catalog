@@ -1,0 +1,50 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div id="wrapper">
+  <div class="row">
+    <div class="col-sm-4">
+      <legend class="border-bottom">Categories</legend>
+    </div>
+    <div class="col-sm-8">
+        <legend id="recent-items" class="border-bottom">Recently Added</legend>
+    </div>
+    <div id="categories" class="col-sm-4">
+      {% for cat in categories %}
+      <a class="category-link" href="{{url_for('showItems', category_name = cat.name)}}">
+        <div class="card border-info custom-shadow mb-2" style="max-width: 18rem;">
+            <div class="card-body d-flex flex-row align-items-center p-0" style="height:5rem">
+              <div class="card-icon bg-info display-4" style="height:100%" > </div>
+              <div class="card-text category-text pl-3 pt-3" style="max-height:100%"> {{cat.name}}</div>
+            </div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+    <div id="Items" class="col-sm-8">
+      {% if items %}
+        {% for i in items %}
+            <div class="card shadow mb-2">
+              <div class="card-title border-bottom p-2">
+                <a class="h5" id="item-details" href="{{url_for('detailViewCatalogItem', category_name=i.item_cat_name, item_title=i.title)}}">
+                  <em>{{i.title}}</em>
+                </a>
+              </div>
+              <div class="card-body">
+                <p>{{i.description}}</p>
+              </div>
+              <div class="card-footer text-right">
+                <small class="badge badge-info">
+                  {{i.item_cat_name}}
+                </small>
+              </div>
+            </div>
+          {% endfor %}
+      {% else %}
+      <p>No recently added items</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+<script src="{{url_for('static', filename='js/layout.js')}}"></script>
+
+{% endblock %}

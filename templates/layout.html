@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+  {% block title %}
+  <title> Items Catalog </title>
+  {% endblock %}
+  <link rel="icon" 
+    href='https://proxy.duckduckgo.com/iu/?u=https%3A%2F%2Fstampshopcentral.com%2Fimages%2Ficons%2Forange-catalog-icon-1.png&f=1&nofb=1' 
+    type="image/png">
+  
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/layout.css') }}">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.2/css/all.min.css" 
+        integrity="sha256-zmfNZmXoNWBMemUOo1XUGFfc0ihGGLYdgtJS3KCr/l0=" 
+        crossorigin="anonymous"/>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" 
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" 
+      crossorigin="anonymous">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" 
+          integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" 
+          crossorigin="anonymous">
+  </script>
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" 
+    integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" 
+    crossorigin="anonymous">
+  </script>
+
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" 
+    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" 
+    crossorigin="anonymous">
+  </script>
+
+</head>
+
+<body class='body-layout'>
+<div id="page-wrapper" class="container-fluid">
+<!-- navbar -->
+  <div class="container">
+    <nav class="navbar navbar-expand-lg">
+  <a class="navbar-brand" href="{{url_for('showCatalog')}}">
+    <img class="rounded-circle" height="75px" width="75px" src="{{url_for('static', filename='img/logo4.jpg')}}" alt="Logo">
+  </a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link" href="{{url_for('showCatalog')}}">Home <span class="sr-only">(current)</span></a>
+      </li>
+        {% if 'username' in session %}
+      
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Add
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <a class="dropdown-item" href="{{ url_for('newCatalogItem') }}">New Item</a>
+          {% if 'is_superuser' in session %}
+          <a class="dropdown-item" href="{{ url_for('newCategory') }}">New Category</a>
+          {% endif %}
+        </div>
+      </li>
+        {% endif %}
+    </ul>
+      <input id="nav-search" class="form-control mr-sm-2 w-50" type="search" placeholder="Dynamic Search"  aria-label="Search">
+        <label for="nav-search" class="btn btn-danger my-2 my-sm-0">
+          <i class="fas fa-filter"></i>
+        </label>
+    <ul class="navbar-nav mr-1 ml-auto">
+      <li class="nav-item">
+        {% if 'username' in session %}
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="fas fa-user fa-fw"></i> 
+          <img class="rounded-pill" height="36px" src="{{session['picture']}}" alt="">
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <a class="dropdown-item" href="{{ url_for('viewProfile') }}">
+            <i class="fas fa-user fa-fw"></i>
+            View Profile
+          </a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="{{url_for('disconnect')}}"> 
+            <i class="fas fa-sign-out-alt"></i>
+            Log Out
+          </a>
+        </div>
+      </li>
+          
+        {% else %}
+          <a class="nav-link" href="{{url_for('showLogin')}}">
+            <i class="fas fa-sign-in-alt fa-fw"></i>
+            Log In
+          </a>
+        {% endif %}
+      </li>
+    </ul>
+  </div>
+</nav>
+<!-- /end of nav -->
+  </div>
+  <div class="container">
+    <div id="searchable-container" class="row justify-content-center">
+      <!-- {% block messages %} -->
+<!-- messages here -->
+      {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+      <div class="col-sm-12">
+          {% for category, message in messages %}
+        <div class="alert alert-{{category}}">
+          <strong> {{ message }} </strong></div>
+          {% endfor %}
+      </div>
+      {% endif %}
+    {% endwith %}
+    </div>
+<!-- /end messages  -->
+   <!--  {% endblock %} -->
+<!-- block content -->
+    {% block content %}
+    {% endblock %}
+  </div>
+<!--/ end of block content -->
+</div>
+<script src="{{url_for('static', filename='js/my-icons.js')}}"></script>
+<script>
+  {% block jQuery %}
+  $(document).ready(function(){
+    
+    $('.card-icon').each(function(cat){
+      let cat_name = $(this).siblings()[0].innerText;
+      icon_arr = iconsArray.filter( e => e.description == cat_name.toLowerCase());
+      if(icon_arr.length){
+        $(this).prepend(icon_arr[0]['icon']);
+      }else{
+        $(this).prepend(defaultIcon);
+      }
+    });
+  });
+  {% endblock %}
+</script>
+
+</body>
+
+</html>
